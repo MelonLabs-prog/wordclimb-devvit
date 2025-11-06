@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WordClimb</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    .splash-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .splash-gif {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Hide default elements */
+    .clickable-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container" onclick="window.location.href='index.html'">
+    <img src="splash-background.gif" alt="WordClimb" class="splash-gif">
+    <div class="clickable-overlay"></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height, user-scalable=0"
+    />
+    <title>WordClimb</title>
+  </head>
+  <body class="app">
+    <!-- Landing Page (shown first) -->
+    <div class="landing-page" id="landing-page">
+      <div class="landing-container">
+        <div class="landing-header">
+          <h1 class="landing-title">WordClimb</h1>
+          <p class="landing-subtitle" id="landing-puzzle-number">Loading...</p>
+        </div>
+
+        <div class="landing-puzzle-info">
+          <h3>Today's Challenge</h3>
+          <div class="puzzle-preview">
+            <div class="preview-word">
+              <span class="preview-label">Start</span>
+              <span class="preview-value" id="landing-start-word">----</span>
+            </div>
+            <span class="preview-arrow">→</span>
+            <div class="preview-word">
+              <span class="preview-label">Goal</span>
+              <span class="preview-value" id="landing-end-word">----</span>
+            </div>
+          </div>
+          <p class="how-to-play">
+            Change 1 letter at a time to reach the goal:<br>
+            <span class="example-small">BIRD → BARD → WARD → WARM → WORM</span>
+          </p>
+        </div>
+
+        <div class="landing-leaderboard">
+          <h3>🏆 Today's Top Players</h3>
+          <div class="players-solved" id="players-solved">
+            <span id="total-players">0</span> players solved today
+          </div>
+          <div class="landing-leaderboard-content" id="landing-leaderboard">
+            <div class="loading-leaderboard">Loading...</div>
+          </div>
+        </div>
+
+        <button id="start-game-button" class="start-game-button">Start Playing</button>
+      </div>
+    </div>
+
+    <!-- Game Container (shown after clicking start) -->
+    <div class="game-container hidden" id="game-container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="game-title">WordClimb</h1>
+        <p class="puzzle-number" id="puzzle-number">Loading...</p>
+        <button id="back-button" class="back-button">← Back to Landing</button>
+      </div>
+
+      <!-- Game Info -->
+      <div class="game-info">
+        <div class="info-item">
+          <span class="label">Start:</span>
+          <span class="value start-word" id="start-word">----</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="info-item">
+          <span class="label">Goal:</span>
+          <span class="value end-word" id="end-word">----</span>
+        </div>
+      </div>
+
+      <!-- Player Info -->
+      <div class="player-info">
+        <span id="username">Player</span> | Steps: <span id="step-count">0</span>/<span id="optimal-steps">?</span>
+      </div>
+
+      <!-- Path Display -->
+      <div class="path-container" id="path-container">
+        <div class="path-item">
+          <span class="step-number">1.</span>
+          <span class="word">COLD</span>
+        </div>
+      </div>
+
+      <!-- Input Section -->
+      <div class="input-section" id="input-section">
+        <input
+          type="text"
+          id="word-input"
+          class="word-input"
+          placeholder="Enter next word..."
+          maxlength="10"
+          autocomplete="off"
+        />
+        <button id="submit-button" class="submit-button">Submit</button>
+      </div>
+
+      <!-- Message Display -->
+      <div class="message" id="message"></div>
+
+      <!-- Completion Section (hidden initially) -->
+      <div class="completion-section hidden" id="completion-section">
+        <div class="completion-title">🎉 Puzzle Complete!</div>
+        <div class="score-display">
+          <div class="score-label">Your Score:</div>
+          <div class="score-value" id="final-score">0</div>
+        </div>
+        <div class="score-details" id="score-details"></div>
+        <button id="reset-button" class="reset-button">Try Again</button>
+        <button id="clear-progress-button" class="clear-button">Clear Progress (Test)</button>
+      </div>
+
+      <!-- Loading Overlay -->
+      <div class="loading hidden" id="loading">Loading...</div>
+    </div>
+
+    <script type="module" src="main.ts" defer></script>
+  </body>
+</html>
