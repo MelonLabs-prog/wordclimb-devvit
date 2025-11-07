@@ -110,8 +110,8 @@ router.post<
 
     const currentWord = path[path.length - 1];
 
-    // Validate the move
-    const validation = WordValidator.validateMove(currentWord, word, path);
+    // Validate the move (now async with hybrid validation)
+    const validation = await WordValidator.validateMove(currentWord, word, path);
 
     if (!validation.valid) {
       res.json({
@@ -363,6 +363,55 @@ router.post<
   }
 });
 
+router.post<
+  { postId: string },
+  { status: string; message: string; word?: string },
+  { word: string }
+>("/api/clear-word-cache", async (req, res): Promise<void> => {
+  try {
+    const { word } = req.body;
+
+    if (!word) {
+      res.status(400).json({
+        status: "error",
+        message: "word is required"
+      });
+      return;
+    }
+
+    const wordLower = word.toLowerCase();
+    const cacheKey = `word:valid:${wordLower}`;
+
+    console.log(`🔍 Attempting to clear cache for: "${wordLower}"`);
+    console.log(`🔑 Redis key: "${cacheKey}"`);
+
+    // Check if key exists before deleting
+    const existsBefore = await redis.get(cacheKey);
+    console.log(`📋 Cache value before delete: ${existsBefore}`);
+
+    // Delete from Redis cache
+    const deleteResult = await redis.del(cacheKey);
+    console.log(`🗑️ Delete result: ${deleteResult}`);
+
+    // Verify deletion
+    const existsAfter = await redis.get(cacheKey);
+    console.log(`📋 Cache value after delete: ${existsAfter}`);
+
+    console.log(`✅ Successfully cleared cache for word: "${wordLower}"`);
+    res.json({
+      status: "success",
+      message: `Cache cleared for word: ${wordLower}`,
+      word: wordLower
+    });
+  } catch (error) {
+    console.error(`❌ Error clearing word cache:`, error);
+    res.status(400).json({
+      status: "error",
+      message: "Failed to clear word cache",
+    });
+  }
+});
+
 router.post("/internal/on-app-install", async (_req, res): Promise<void> => {
   try {
     const post = await createPost();
@@ -392,6 +441,25 @@ router.post("/internal/menu/post-create", async (_req, res): Promise<void> => {
     res.status(400).json({
       status: "error",
       message: "Failed to create post",
+    });
+  }
+});
+
+router.post("/internal/cron/daily-puzzle", async (_req, res): Promise<void> => {
+  try {
+    const post = await createPost();
+
+    console.log(`Daily puzzle created: ${post.id} in r/${context.subredditName}`);
+    res.json({
+      status: "success",
+      message: `Daily puzzle post created with id ${post.id}`,
+      postId: post.id,
+    });
+  } catch (error) {
+    console.error(`Error creating daily puzzle: ${error}`);
+    res.status(400).json({
+      status: "error",
+      message: "Failed to create daily puzzle post",
     });
   }
 });

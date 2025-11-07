@@ -1,46 +1,89 @@
 // Word dictionary for WordClimb game
-// This is a starter set - we'll expand this later
+import { redis } from "@devvit/web/server";
+import { WORD_LIST } from "./words";
 
-export const WORD_DICTIONARY = new Set([
-  // 4-letter words for word ladder puzzles
-  "cold", "cord", "card", "ward", "warm", "worm", "word", "work", "pork", "port",
-  "post", "past", "fast", "cast", "case", "base", "bass", "pass", "mass", "miss",
-  "mist", "list", "lost", "cost", "coat", "boat", "beat", "heat", "head", "dead",
-  "lead", "load", "loan", "moan", "moon", "soon", "noon", "noon", "good", "food",
-  "fool", "pool", "cool", "coal", "foal", "goal", "goat", "moat", "meat", "meet",
-  "feet", "feel", "fell", "tell", "tall", "talk", "walk", "wall", "ball", "call",
-  "calm", "palm", "pale", "page", "cage", "cake", "care", "bare", "barn", "barn",
-  "born", "corn", "torn", "turn", "burn", "barn", "bard", "bird", "bind", "mind",
-  "mine", "line", "fine", "find", "kind", "king", "ring", "wing", "wine", "pine",
-  "pain", "rain", "main", "gain", "grin", "grit", "grid", "grey", "prey", "pray",
-  "play", "plan", "plane", "plane", "plant", "slant", "slain", "stain", "train", "brain",
-  "braid", "bread", "break", "bleak", "black", "blank", "blink", "brink", "bring", "being",
+// Create Set for O(1) lookup
+const WORD_DICTIONARY = new Set(WORD_LIST);
 
-  // More 4-letter words
-  "game", "came", "name", "same", "tame", "tale", "take", "make", "mate", "gate",
-  "hate", "have", "gave", "give", "live", "love", "move", "more", "sore", "sure",
-  "pure", "cure", "care", "dare", "date", "late", "rate", "race", "rice", "ride",
-  "hide", "side", "wide", "wire", "fire", "tire", "time", "tide", "tile", "mile",
-  "mild", "wild", "will", "till", "bill", "bell", "well", "sell", "tell", "fell",
+console.log(`Loaded ${WORD_DICTIONARY.size} words from dictionary`);
 
-  // Common words for variety
-  "help", "hero", "here", "were", "wear", "bear", "beer", "deer", "deep", "keep",
-  "keen", "seen", "seen", "mean", "lean", "bean", "beat", "seat", "seal", "real",
-  "read", "road", "toad", "load", "lend", "tend", "mend", "send", "sand", "hand",
-  "band", "land", "lend", "bend", "bind", "find", "wind", "kind", "king", "sing",
-  "song", "long", "lung", "hung", "hunt", "hurt", "sort", "port", "part", "park",
-  "dark", "dare", "care", "came", "some", "home", "dome", "done", "bone", "cone",
-  "core", "more", "mode", "rode", "role", "hole", "hope", "rope", "ripe", "pipe",
-  "pile", "file", "fill", "hill", "mill", "milk", "silk", "silt", "tilt", "wilt",
-
-  // Starting words for puzzles
-  "play", "stop", "jump", "dump", "pump", "lump", "lamp", "camp", "came", "came",
-  "ship", "shop", "shot", "slot", "slow", "flow", "glow", "grow", "crow", "crew",
-  "brew", "drew", "drag", "brag", "brad", "bead", "bean", "dean", "lean", "lead",
-]);
-
+/**
+ * Check if word exists in local dictionary
+ */
 export function isValidWord(word: string): boolean {
   return WORD_DICTIONARY.has(word.toLowerCase());
+}
+
+/**
+ * Validate word with hybrid approach: local dictionary + API fallback
+ * Includes Redis caching for API results
+ */
+export async function isValidWordWithFallback(word: string): Promise<boolean> {
+  const wordLower = word.toLowerCase();
+
+  // Step 1: Check local dictionary first (instant)
+  if (WORD_DICTIONARY.has(wordLower)) {
+    console.log(`✓ Word "${wordLower}" found in LOCAL DICTIONARY (instant)`);
+    return true;
+  }
+
+  // Step 2: Check Redis cache for previous API results
+  const cacheKey = `word:valid:${wordLower}`;
+  console.log(`🔍 Checking Redis cache for key: "${cacheKey}"`);
+  const cachedResult = await redis.get(cacheKey);
+  console.log(`📦 Redis cache result: ${cachedResult}`);
+
+  // Check for both null and undefined (Redis can return either when key doesn't exist)
+  if (cachedResult != null) {
+    const isValid = cachedResult === "true";
+    console.log(`✓ Word "${wordLower}" found in REDIS CACHE: ${isValid ? "VALID" : "INVALID"}`);
+    return isValid;
+  }
+
+  console.log(`❌ Word "${wordLower}" NOT found in Redis cache`);
+
+
+  // Step 3: Fallback to Free Dictionary API
+  console.log(`⏳ Word "${wordLower}" NOT in local dictionary or cache, calling API...`);
+  try {
+    const response = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${wordLower}`
+    );
+
+    console.log(`📡 API Response Status: ${response.status} for "${wordLower}"`);
+
+    // Only cache explicit results, not errors
+    if (response.status === 200) {
+      // Word is valid
+      await redis.set(cacheKey, "true", { expiration: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
+      console.log(`✓ API validation: "${wordLower}" is VALID (cached for 30 days)`);
+      return true;
+    } else if (response.status === 404) {
+      // Word not found - cache as invalid
+      await redis.set(cacheKey, "false", { expiration: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) });
+      console.log(`✗ API validation: "${wordLower}" is INVALID/NOT FOUND (cached for 30 days)`);
+      return false;
+    } else {
+      // Other status codes (5xx, 429, etc.) - don't cache, just reject for now
+      console.warn(`⚠️ API returned status ${response.status} for "${wordLower}" - NOT caching, rejecting`);
+      return false;
+    }
+  } catch (error) {
+    console.error(`❌ Network error validating word "${wordLower}" with API:`, error);
+    // On network error, don't cache, just reject for now
+    return false;
+  }
+}
+
+/**
+ * Get dictionary statistics
+ */
+export function getDictionaryStats() {
+  return {
+    localDictionarySize: WORD_DICTIONARY.size,
+    sampleWords: Array.from(WORD_DICTIONARY).slice(0, 10),
+    hasWord: (word: string) => WORD_DICTIONARY.has(word.toLowerCase())
+  };
 }
 
 export function getRandomPuzzle(): { start: string; end: string; optimal: number } {

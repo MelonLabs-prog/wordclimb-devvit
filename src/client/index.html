@@ -99,6 +99,9 @@
         <button id="submit-button" class="submit-button">Submit</button>
       </div>
 
+      <button id="give-up-button" class="give-up-button">Give Up & Restart</button>
+      <button id="clear-cache-button" class="clear-button">Clear Word Cache (Test)</button>
+
       <!-- Message Display -->
       <div class="message" id="message"></div>
 
@@ -116,6 +119,31 @@
 
       <!-- Loading Overlay -->
       <div class="loading hidden" id="loading">Loading...</div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay hidden" id="confirm-modal">
+      <div class="modal-box">
+        <div class="modal-title">Give Up?</div>
+        <div class="modal-message">Give up and restart this puzzle? Your current progress will be lost.</div>
+        <div class="modal-buttons">
+          <button id="confirm-yes" class="modal-button modal-yes">Yes, Restart</button>
+          <button id="confirm-no" class="modal-button modal-no">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clear Cache Modal -->
+    <div class="modal-overlay hidden" id="cache-modal">
+      <div class="modal-box">
+        <div class="modal-title">Clear Word Cache</div>
+        <div class="modal-message">Enter the word to clear from cache:</div>
+        <input type="text" id="cache-word-input" class="modal-input" placeholder="e.g., wore" maxlength="20" />
+        <div class="modal-buttons">
+          <button id="cache-clear" class="modal-button modal-yes">Clear Cache</button>
+          <button id="cache-cancel" class="modal-button modal-no">Cancel</button>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="main.ts" defer></script>

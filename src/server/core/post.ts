@@ -10,12 +10,14 @@ export const createPost = async () => {
   const puzzleNumber = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
 
   return await reddit.submitCustomPost({
-    splash: { // Splash Screen Configuration
+    splash: {
       appDisplayName: 'WordClimb',
-      backgroundUri: 'splash-background.gif',
+      backgroundUri: 'background.gif',
       appIconUri: 'wordclimb-icon.png',
-      buttonLabel: ' ',
       entryUri: 'index.html',
+      heading: '',
+      description: '',
+      buttonLabel: 'Play',
     },
     postData: {
       gameState: 'initial',

@@ -1,11 +1,19 @@
 {
   "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
   "name": "wordclimb",
+  "permissions": {
+    "http": {
+      "enable": true,
+      "domains": ["api.dictionaryapi.dev"]
+    },
+    "redis": true
+  },
   "post": {
     "dir": "dist/client",
     "entrypoints": {
       "default": {
-        "entry": "index.html"
+        "entry": "index.html",
+        "height": "regular"
       }
     }
   },
@@ -29,6 +37,14 @@
   },
   "triggers": {
     "onAppInstall": "/internal/on-app-install"
+  },
+  "scheduler": {
+    "tasks": {
+      "daily-puzzle": {
+        "endpoint": "/internal/cron/daily-puzzle",
+        "cron": "0 0 * * *"
+      }
+    }
   },
   "dev": {
     "subreddit": "wordclimb_dev"

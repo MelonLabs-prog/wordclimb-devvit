@@ -8,6 +8,8 @@
 
 body, html {
   height: 100%;
+  width: 100vw;
+  max-width: 100vw;
   margin: 0;
   padding: 0;
   font-family: 'Press Start 2P', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -30,7 +32,7 @@ body, html {
   display: flex;
   flex-direction: column;
   flex: 1;
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 15px;
   width: 100%;
@@ -224,6 +226,36 @@ body, html {
   box-shadow: 2px 2px 0px #2C2C54;
 }
 
+/* Give Up Button */
+.give-up-button {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #2C2C54;
+  border-radius: 0px;
+  background: rgba(255, 255, 255, 0.3);
+  color: #2C2C54;
+  font-size: 0.6em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  margin-bottom: 15px;
+  box-shadow: 3px 3px 0px #2C2C54;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.give-up-button:hover {
+  background: rgba(255, 100, 100, 0.4);
+  opacity: 1;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #2C2C54;
+}
+
+.give-up-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px #2C2C54;
+}
+
 /* Message */
 .message {
   text-align: center;
@@ -403,20 +435,37 @@ body, html {
 }
 
 .clear-button {
+  width: 100%;
   padding: 10px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(255, 100, 100, 0.3);
-  color: white;
-  font-size: 0.85em;
+  border: 2px solid #2C2C54;
+  border-radius: 0px;
+  background: rgba(255, 255, 255, 0.3);
+  color: #2C2C54;
+  font-size: 0.6em;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
+  margin-bottom: 15px;
+  box-shadow: 3px 3px 0px #2C2C54;
+  text-transform: uppercase;
+  opacity: 0.7;
 }
 
 .clear-button:hover {
-  background: rgba(255, 100, 100, 0.5);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(200, 200, 255, 0.4);
+  opacity: 1;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #2C2C54;
+}
+
+.clear-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0px #2C2C54;
+}
+
+/* Clear button in completion section */
+.completion-section .clear-button {
+  margin-bottom: 10px;
 }
 
 /* Loading */
@@ -498,7 +547,7 @@ body, html {
 }
 
 .landing-container {
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   width: 100%;
 }
@@ -724,6 +773,127 @@ body, html {
   border-color: rgba(255, 255, 255, 0.5);
 }
 
+/* Confirmation Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+  background: linear-gradient(135deg, #FFB6D9 0%, #A8D8FF 100%);
+  border: 4px solid #2C2C54;
+  border-radius: 0px;
+  box-shadow: 8px 8px 0px #2C2C54;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  animation: scaleIn 0.3s ease;
+}
+
+.modal-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #2C2C54;
+  text-align: center;
+}
+
+.modal-message {
+  font-size: 0.7em;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #2C2C54;
+  text-align: center;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 12px;
+  border: 3px solid #2C2C54;
+  border-radius: 0px;
+  font-size: 0.8em;
+  font-family: 'Press Start 2P', monospace;
+  background: white;
+  color: #2C2C54;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+  text-transform: uppercase;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: #4A90E2;
+  box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1), 0 0 0 2px #4A90E2;
+}
+
+.modal-input::placeholder {
+  text-transform: lowercase;
+  opacity: 0.5;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-button {
+  padding: 12px 20px;
+  border: 3px solid #2C2C54;
+  border-radius: 0px;
+  font-size: 0.7em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 4px 4px 0px #2C2C54;
+  text-transform: uppercase;
+  flex: 1;
+  max-width: 150px;
+}
+
+.modal-yes {
+  background: #FF6B6B;
+  color: white;
+}
+
+.modal-yes:hover {
+  background: #FF5252;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #2C2C54;
+}
+
+.modal-yes:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #2C2C54;
+}
+
+.modal-no {
+  background: rgba(255, 255, 255, 0.9);
+  color: #2C2C54;
+}
+
+.modal-no:hover {
+  background: white;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #2C2C54;
+}
+
+.modal-no:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #2C2C54;
+}
+
 /* Mobile responsive for landing */
 @media (max-width: 480px) {
   .landing-title {
@@ -749,5 +919,82 @@ body, html {
 
   .preview-arrow {
     transform: rotate(90deg);
+  }
+}
+
+/* Tablet Responsive (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .game-container {
+    max-width: 700px;
+    padding: 20px;
+  }
+
+  .landing-container {
+    max-width: 800px;
+  }
+
+  .game-title {
+    font-size: 2em;
+  }
+
+  .landing-title {
+    font-size: 3em;
+  }
+
+  .value {
+    font-size: 1.8em;
+  }
+
+  .preview-value {
+    font-size: 1.8em;
+    padding: 12px 24px;
+  }
+}
+
+/* Desktop Responsive (769px+) */
+@media (min-width: 769px) {
+  .game-container {
+    max-width: 900px;
+    padding: 30px;
+  }
+
+  .landing-container {
+    max-width: 1000px;
+  }
+
+  .game-title {
+    font-size: 2.2em;
+  }
+
+  .landing-title {
+    font-size: 3.5em;
+  }
+
+  .value {
+    font-size: 2em;
+  }
+
+  .preview-value {
+    font-size: 2em;
+    padding: 15px 30px;
+  }
+
+  .word-input {
+    font-size: 1.2em;
+    padding: 18px;
+  }
+
+  .submit-button {
+    padding: 15px 30px;
+    font-size: 0.8em;
+  }
+
+  .landing-puzzle-info,
+  .landing-leaderboard {
+    padding: 30px;
+  }
+
+  .path-container {
+    max-height: 350px;
   }
 }

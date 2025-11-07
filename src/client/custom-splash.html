@@ -2,14 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="preload" as="image" href="splash-background.gif">
   <title>WordClimb</title>
   <style>
-    body {
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
       overflow: hidden;
+    }
+
+    body {
       font-family: 'Press Start 2P', monospace;
+      background: #FFB6D9;
     }
 
     .splash-container {
@@ -20,15 +31,17 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      background: linear-gradient(135deg, #FFB6D9 0%, #A8D8FF 100%);
     }
 
     .splash-gif {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      max-width: 1200px;
+      max-height: 100vh;
     }
 
-    /* Hide default elements */
     .clickable-overlay {
       position: absolute;
       top: 0;
@@ -36,12 +49,19 @@
       width: 100%;
       height: 100%;
       cursor: pointer;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .splash-gif {
+        object-fit: cover;
+      }
     }
   </style>
 </head>
 <body>
   <div class="splash-container" onclick="window.location.href='index.html'">
-    <img src="splash-background.gif" alt="WordClimb" class="splash-gif">
+    <img src="splash-background.gif" alt="WordClimb Splash" class="splash-gif">
     <div class="clickable-overlay"></div>
   </div>
 </body>

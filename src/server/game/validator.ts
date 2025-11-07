@@ -1,4 +1,4 @@
-import { isValidWord } from "./dictionary";
+import { isValidWordWithFallback } from "./dictionary";
 
 export interface ValidationResult {
   valid: boolean;
@@ -31,17 +31,18 @@ export class WordValidator {
   }
 
   /**
-   * Validate a move in the word ladder
+   * Validate a move in the word ladder (now async with API fallback)
    */
-  static validateMove(
+  static async validateMove(
     currentWord: string,
     newWord: string,
     path: string[]
-  ): ValidationResult {
+  ): Promise<ValidationResult> {
     const newWordLower = newWord.toLowerCase();
 
-    // Check if word is valid English
-    if (!isValidWord(newWordLower)) {
+    // Check if word is valid English (hybrid: local + API fallback)
+    const isValid = await isValidWordWithFallback(newWordLower);
+    if (!isValid) {
       return {
         valid: false,
         message: "Not a valid English word!"
