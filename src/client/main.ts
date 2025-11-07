@@ -32,7 +32,6 @@ const finalScoreElement = document.getElementById("final-score") as HTMLDivEleme
 const scoreDetailsElement = document.getElementById("score-details") as HTMLDivElement;
 const resetButton = document.getElementById("reset-button") as HTMLButtonElement;
 const clearProgressButton = document.getElementById("clear-progress-button") as HTMLButtonElement;
-const clearCacheButton = document.getElementById("clear-cache-button") as HTMLButtonElement;
 const backButton = document.getElementById("back-button") as HTMLButtonElement;
 const giveUpButton = document.getElementById("give-up-button") as HTMLButtonElement;
 const totalPlayersElement = document.getElementById("total-players") as HTMLSpanElement;
@@ -40,10 +39,6 @@ const loadingElement = document.getElementById("loading") as HTMLDivElement;
 const confirmModal = document.getElementById("confirm-modal") as HTMLDivElement;
 const confirmYesButton = document.getElementById("confirm-yes") as HTMLButtonElement;
 const confirmNoButton = document.getElementById("confirm-no") as HTMLButtonElement;
-const cacheModal = document.getElementById("cache-modal") as HTMLDivElement;
-const cacheWordInput = document.getElementById("cache-word-input") as HTMLInputElement;
-const cacheClearButton = document.getElementById("cache-clear") as HTMLButtonElement;
-const cacheCancelButton = document.getElementById("cache-cancel") as HTMLButtonElement;
 
 // Game State
 let currentPostId: string | null = null;
@@ -106,10 +101,8 @@ function showGame() {
   if (!isCompleted) {
     wordInput.focus();
     giveUpButton.classList.remove("hidden");
-    clearCacheButton.classList.remove("hidden");
   } else {
     giveUpButton.classList.add("hidden");
-    clearCacheButton.classList.add("hidden");
   }
 }
 
@@ -219,7 +212,6 @@ function showCompletion(score: number, scoreDetails?: any) {
 
   inputSection.classList.add("hidden");
   giveUpButton.classList.add("hidden");
-  clearCacheButton.classList.add("hidden");
   completionSection.classList.remove("hidden");
   finalScoreElement.textContent = score.toString();
 
@@ -265,7 +257,6 @@ async function resetGame() {
       completionSection.classList.add("hidden");
       inputSection.classList.remove("hidden");
       giveUpButton.classList.remove("hidden");
-      clearCacheButton.classList.remove("hidden");
       clearMessage();
       wordInput.value = "";
       wordInput.focus();
@@ -312,16 +303,6 @@ function showConfirmModal() {
 
 function hideConfirmModal() {
   confirmModal.classList.add("hidden");
-}
-
-function showCacheModal() {
-  cacheWordInput.value = "";
-  cacheModal.classList.remove("hidden");
-  cacheWordInput.focus();
-}
-
-function hideCacheModal() {
-  cacheModal.classList.add("hidden");
 }
 
 // Fetch and display leaderboard (for landing page)
@@ -408,39 +389,6 @@ async function clearProgress() {
   }
 }
 
-// Clear word cache (for testing)
-async function clearWordCache(word: string) {
-  if (!word || !word.trim()) {
-    showMessage("Please enter a word", "error");
-    return;
-  }
-
-  showLoading(true);
-
-  try {
-    const response = await fetch("/api/clear-word-cache", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ word: word.trim() }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("Cache cleared:", data);
-    showMessage(`Cache cleared for "${word.trim()}"`, "success");
-  } catch (error) {
-    console.error(`Error clearing word cache:`, error);
-    showMessage("Error clearing word cache", "error");
-  } finally {
-    showLoading(false);
-  }
-}
-
 // Event Listeners
 submitButton.addEventListener("click", submitWord);
 wordInput.addEventListener("keypress", (e) => {
@@ -450,9 +398,6 @@ wordInput.addEventListener("keypress", (e) => {
 });
 resetButton.addEventListener("click", resetGame);
 clearProgressButton.addEventListener("click", clearProgress);
-clearCacheButton.addEventListener("click", () => {
-  showCacheModal();
-});
 backButton.addEventListener("click", showLanding);
 startGameButton.addEventListener("click", showGame);
 giveUpButton.addEventListener("click", () => {
@@ -469,24 +414,6 @@ confirmYesButton.addEventListener("click", () => {
 confirmNoButton.addEventListener("click", () => {
   console.log("User cancelled");
   hideConfirmModal();
-});
-
-cacheClearButton.addEventListener("click", () => {
-  const word = cacheWordInput.value;
-  hideCacheModal();
-  clearWordCache(word);
-});
-
-cacheCancelButton.addEventListener("click", () => {
-  hideCacheModal();
-});
-
-cacheWordInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    const word = cacheWordInput.value;
-    hideCacheModal();
-    clearWordCache(word);
-  }
 });
 
 // Initialize on load
